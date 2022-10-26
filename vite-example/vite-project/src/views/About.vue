@@ -1,21 +1,19 @@
 <script name="kaka" lang="ts" setup>
 import {ref} from "vue";
-import {onBeforeRouteUpdate} from "vue-router";
+import {onBeforeRouteUpdate, onBeforeRouteLeave} from "vue-router";
 
 const count = ref(0);
 
-defineProps({
-  msg: String,
-});
-onBeforeRouteUpdate(() => {
-  console.log(555);
-});
 function go1() {
   console.log("go1:", count.value);
 }
 function go2() {
   console.log("go1:", count.value);
 }
+onBeforeRouteUpdate(() => {
+  console.log(555);
+});
+onBeforeRouteLeave(() => false);
 </script>
 
 <template>

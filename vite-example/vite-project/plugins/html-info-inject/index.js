@@ -1,9 +1,15 @@
 import { Regex } from "./enums";
+import fs from 'fs';
+import path from 'path';
 import {is, isArray, isFunction, isString} from './utils/is'
-export const htmlPlugin = (options) => {
-  const { title, script, css,keywords,description } = options;
-  
+export default (options) => {
+  const { title, script, css,keywords,description,vconsole } = options;
+  let env;
   return {
+    name:'vite-plugin-html-info-inject',
+    config(_, { command }) {
+      env = command;
+    },
     transformIndexHtml(html) {
       let result = '';
       if (title) {
@@ -30,7 +36,11 @@ export const htmlPlugin = (options) => {
             : result.replace(Regex.endHtml, `<script src="${item.src}"></script>\n</html>`);
         })
       } else if (isString(script)) {
-        result= result.replace(Regex.endHtml, `<script src="${script}"></script>\n</html>`)
+        result = result.replace(Regex.endHtml, `<script src="${script}"></script>\n</html>`);
+      }
+      if (vconsole) {
+        const content = fs.readFileSync(path.resolve(path.resolve(__dirname,'./utils/vconsole.js')));
+        result = result.replace(Regex.endHtml, `<script>${Buffer.from(content).toString('utf-8')}</script>\n</html>`);
       }
       return result;
     }
